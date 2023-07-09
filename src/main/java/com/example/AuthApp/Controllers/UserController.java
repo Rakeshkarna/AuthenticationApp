@@ -2,9 +2,6 @@ package com.example.AuthApp.Controllers;
 
 import com.example.AuthApp.Models.Users;
 import com.example.AuthApp.Services.UserService;
-import jakarta.validation.Valid;
-import jakarta.websocket.OnClose;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 @RestController
@@ -43,12 +41,14 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Object>registerUser(@RequestBody @Valid Users user){
-        if(Objects.isNull(user)){
+        if(Objects.isNull(user) || Objects.isNull(user.getUsername())|| Objects.isNull(user.getEmail()) || Objects.isNull(user.getPassword())){
             return  new ResponseEntity<>("Invalid Details", HttpStatus.BAD_REQUEST);
         }
         if(userService.getUserByEmail(user.getEmail()) !=null){
             return new ResponseEntity<>("Email already Exist",HttpStatus.BAD_REQUEST);
         }
+
+
         userService.saveUser(user);
        return new ResponseEntity<>("User Created",HttpStatus.CREATED);
     }
